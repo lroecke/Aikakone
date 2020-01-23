@@ -51,7 +51,7 @@ public class crosshair : MonoBehaviour
             {   
                  if((lastShot-(Time.time*1000)) <= -(60000/ feuerRateMin))
                  {
-                    if (!GameObject.Find("ammoCapacityText").GetComponent<magazin>().checkMagEmpty())
+                    if (!GameObject.Find("ammoCapacityText").GetComponent<magazin>().magEmpty)
                     {
                         //mag not empty
                         canShoot = true;
@@ -69,9 +69,7 @@ public class crosshair : MonoBehaviour
                     else
                     {
                         //mag is empty
-                        if (!GameObject.Find("ammoCapacityText").GetComponent<magazin>().checkMagsEmpty())
-                            //There are Magazines left
-                            GameObject.Find("ammoCapacityText").GetComponent<magazin>().reload();
+                        GameObject.Find("ammoCapacityText").GetComponent<magazin>().reload();
                     }
                  }else
                     canShoot = false;

@@ -11,65 +11,48 @@ public class magazin : MonoBehaviour
     public TextMeshProUGUI textMeshMags; //UI Text Object
     public bool magEmpty = false;
 
-    public GameObject spieler;
+
     private float ammoCapacity;
     private float magCapacity;
-    public float ammoLeft;
-    public float magLeft;
+    private float ammoLeft;
+    private float magLeft;
 
     private float reloadTime;
 
-    public void Start()
+    void Start()
     {
         ammoCapacity = GameObject.Find("spieler").GetComponent<crosshair>().ammoCapacity;
         magCapacity = GameObject.Find("spieler").GetComponent<crosshair>().magCapacity;
+
         reloadTime = GameObject.Find("spieler").GetComponent<crosshair>().reloadTime;
 
          magLeft = magCapacity;
          ammoLeft = ammoCapacity;
          updateAmmoCount();
     }
-    public bool checkMagsEmpty()
+    void Update()
     {
-        if (magLeft < 1)
-            return true;
-        return false;
-    }
-    public bool checkMagEmpty()
-    {
-        if (ammoLeft < 1)
-        {
-            magEmpty = true;
-        }
-        else
-        {
-            magEmpty = false;
-        }
-            
-        return magEmpty;
     }
 
     public void removeBulletFromMag(int amount)
     {
-        checkMagEmpty();
+        if (ammoLeft == 0)
+            magEmpty = true;
 
         ammoLeft = ammoLeft - 1;
             updateAmmoCount();
 
-        checkMagEmpty();
+        if (ammoLeft == 0)
+            magEmpty = true;
     }
 
     public void reload()
     {
         StartCoroutine("reloadEnum");
     }
-    public void stopReload()
-    {
-        StopCoroutine("reloadEnum");
-    }
     IEnumerator reloadEnum()
     {
-        yield return new WaitForSeconds(reloadTime/1000f);
+        yield return new WaitForSeconds(reloadTime);
         if (magLeft > 0)
         {
             ammoLeft = ammoCapacity;
@@ -82,24 +65,15 @@ public class magazin : MonoBehaviour
 
     public void updateAmmoCount()
     {
-        if (spieler.GetComponent<crosshair>().isMelee)
+        textMeshMags.text = "/"+magLeft;
+        textMesh.text = ammoLeft + "/" + ammoCapacity;
+        if (ammoLeft < 10)
         {
-            textMeshMags.text = "";
-            textMesh.text = "";
+            textMesh.transform.position = new Vector3(62.5f,31f,0f)*1.5f;
         }
         else
         {
-            textMeshMags.text = "/" + magLeft;
-            textMesh.text = ammoLeft + "/" + ammoCapacity;
-            if (ammoLeft < 10)
-            {
-                textMesh.transform.position = new Vector3(62.5f, 31f, 0f) * 1.5f;
-            }
-            else
-            {
-                textMesh.transform.position = new Vector3(55f, 31f, 0f) * 1.5f;
-            }
+            textMesh.transform.position = new Vector3(55f, 31f, 0f) * 1.5f;
         }
-
     }
 }

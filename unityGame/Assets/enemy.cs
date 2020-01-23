@@ -42,9 +42,11 @@ public class enemy : MonoBehaviour
     {
 
         //die
-        if(health<1)
+        if (health < 1)
+        {
+            countdown.timeLeft += 10;
             Destroy(gameObject);
-
+        }
         //enemy sight
         Collider[] objectsInRadius = Physics.OverlapSphere(transform.position, viewRadius);
         foreach (Collider objects in objectsInRadius)
