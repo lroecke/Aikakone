@@ -7,7 +7,8 @@ public class melee : MonoBehaviour
     public GameObject spieler;
     private float lastShot = 0;
 
-    public float meleeRange;
+    public float weaponDamage = 50f;
+    public float meleeRange = 1f;
     public float meleeRateMin = 120f;
 
     void FixedUpdate()
@@ -22,10 +23,11 @@ public class melee : MonoBehaviour
                      int i = 0;
                      while (i < hitInfo.Length)
                      {
-                         if (hitInfo[i].name != "boden" && hitInfo[i].name != "spieler" && hitInfo[i].name != "bullet(Clone)")
-                         {
-                             Debug.Log(hitInfo[i].name);
-                         }
+                            try
+                            {
+                                hitInfo[i].GetComponent<enemy>().health = hitInfo[i].GetComponent<enemy>().health - weaponDamage;
+                            }
+                            catch { }
                          i++;
                      }
                     lastShot = Time.time * 1000;
