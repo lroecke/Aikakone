@@ -3,9 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
+
 public class enemy : MonoBehaviour
 {
     public Transform spieler;
+    public int spielerLeben = 100;
+    private float spielerEntferung;
     private Rigidbody rb;
     private Vector3 movement;
     private float lastSeen = float.MinValue;
@@ -21,6 +24,10 @@ public class enemy : MonoBehaviour
     public float viewRadius = 10f;
     public float viewRememberTime = 3000f;
 
+    //Melee or Distance
+    public bool isEnemyMelee = false; 
+    public float meleeRadius = 16667f;
+    private float meleeDamage = 30f;
 
     private Vector3 targetPosition;
     private bool searchRunning = false;
@@ -40,13 +47,12 @@ public class enemy : MonoBehaviour
 
     void FixedUpdate()
     {
+            
 
         //die
-        if (health < 1)
-        {
-            countdown.timeLeft += 10;
+        if(health<1)
             Destroy(gameObject);
-        }
+
         //enemy sight
         Collider[] objectsInRadius = Physics.OverlapSphere(transform.position, viewRadius);
         foreach (Collider objects in objectsInRadius)
@@ -73,6 +79,16 @@ public class enemy : MonoBehaviour
                         {
                             //Enemy sees Player or Bullet
                             lastSeen = Time.time * 1000;
+
+                            float spielerEntfernung = Mathf.Sqrt(Mathf.Pow((spieler.transform.position.x - objects.transform.position.x),2) + Mathf.Pow((spieler.transform.position.y - objects.transform.position.y),2));
+
+                            //Enemy in fight range
+                            if(spielerEntfernung<meleeRadius)
+                            {
+                                //spielerLeben = spielerLeben - meleeDamage;
+                                
+                                return;
+                            }
                         }
                     }
                 }
@@ -86,7 +102,25 @@ public class enemy : MonoBehaviour
             patrolRunning = false;
             StopCoroutine("enemySearch");
             searchRunning = false;
-            agent.speed = runingSpeed;
+
+            //Checks how daring the enemy can be
+            //Less daring if near death
+            if (health<=25f)
+            {
+                agent.speed = runingSpeed/2f;
+            }
+            //More daring if player's near death
+            else if(spielerLeben<=25f)
+            {
+                agent.speed = runingSpeed*1.2f;
+                meleeRadius = meleeRadius - 1f;
+            }
+            //normal speed if both ok
+            else
+            {
+                agent.speed = runingSpeed;
+            }
+            
             targetPosition = spieler.transform.position;
             agent.SetDestination(targetPosition);
         }
